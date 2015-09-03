@@ -1,7 +1,8 @@
 package com.marklogic.spark.examples;
 
 /**
- * Created by hpuranik on 7/1/2015.
+ * Created by Hemant Puranik, MarkLogic Corporation in 2015.
+ * This software is distributed without any warranty.
  */
 import com.marklogic.mapreduce.DocumentInputFormat;
 import com.marklogic.mapreduce.DocumentURI;
