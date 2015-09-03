@@ -37,7 +37,8 @@ On the machine where you plan to run the spark application,
 In order to run MarkLogicWordCount example within Spark environment, navigate to the SPARK Home directory on the machine where you plan to run the spark application and Run spark-submit script as shown below
 
 
-	./bin/spark-submit --jars $LIBJARS --class com.marklogic.spark.examples.MarkLogicWordCount --master local[2] \
+	./bin/spark-submit --jars $LIBJARS --master local[2] \
+						--class com.marklogic.spark.examples.MarkLogicWordCount \
 						[my_working_directory]/lib/SparkExamples-1.0-SNAPSHOT.jar \
 						[my_working_directory]/marklogic-spark-count.xml \
 						hdfs://[target_directory]/mlsparkcount
