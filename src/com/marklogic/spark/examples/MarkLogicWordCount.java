@@ -91,28 +91,29 @@ public class MarkLogicWordCount {
             };
 
     public static void main(String[] args) throws IOException {
-        if (args.length < 1) {
-            System.err.println("Please provide the configuration file full path as argument");
+        if (args.length < 2) {
+            System.err.println("Please provide the configuration file full path and target hdfs location as arguments");
             System.exit(0);
         }
 
+        //first you create the spark context within java
         SparkConf conf = new SparkConf().setAppName("com.marklogic.spark.examples").setMaster("local");
         JavaSparkContext context = new JavaSparkContext(conf);
 
-
+        //Create configuration object and load the MarkLogic specific properties from the configuration file.
         Configuration hdConf = new Configuration();
         String configFilePath = args[0].trim();
-        System.out.println(configFilePath);
-
         FileInputStream ipStream =  new FileInputStream(configFilePath);
-
         hdConf.addResource(ipStream);
-
-        JavaPairRDD<DocumentURI, MarkLogicNode> mlRDD = context.newAPIHadoopRDD(hdConf, DocumentInputFormat.class,
-                                                                                        DocumentURI.class,
-                                                                                        MarkLogicNode.class);
+        //Create RDD based on documents within MarkLogic database. Load documents as DocumentURI, MarkLogicNode pairs.
+        JavaPairRDD<DocumentURI, MarkLogicNode> mlRDD = context.newAPIHadoopRDD(
+                hdConf,                     //Configuration
+                DocumentInputFormat.class,  //InputFormat
+                DocumentURI.class,          //Key Class
+                MarkLogicNode.class         //Value Class
+        );
         //extract XML elements as name value pairs where element content is value
-        JavaPairRDD<String, String> elementNameValuePairs = mlRDD.flatMapToPair(ELEMENT_NAME_VALUE_PAIR_EXTRACTOR).cache();
+        JavaPairRDD<String, String> elementNameValuePairs = mlRDD.flatMapToPair(ELEMENT_NAME_VALUE_PAIR_EXTRACTOR);
         //Group element values for the same element name
         JavaPairRDD<String, Iterable<String> > elementNameValueGroup = elementNameValuePairs.groupByKey();
         //Count distinct values for each element name
